@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: fincore
+      POSTGRES_USER: fincore
+      POSTGRES_PASSWORD: fincore
+    ports:
+      - "5432:5432"
+    volumes:
+      - fincore-postgres-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+# Kafka is added in Phase 3 (event backbone) once the transactional
+# outbox / consumers are actually built.
+
+volumes:
+  fincore-postgres-data:
