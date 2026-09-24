@@ -74,8 +74,13 @@ public class LedgerService {
 
             entryRepository.save(new LedgerEntry(transaction, account, line.entryType(), line.amount(), account.getCurrency()));
 
+            // ADR-001: balance row MUST exist — it was created when the account
+            // was created. If it's missing, that's a data integrity violation,
+            // not something we paper over with lazy creation.
             AccountBalance balance = balanceRepository.findByAccountId(account.getId())
-                    .orElseGet(() -> new AccountBalance(account.getId()));
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Balance row missing for account " + account.getAccountRef()
+                                    + " — ADR-001 violated. Was the account created via AccountService?"));
             balance.apply(line.entryType(), line.amount(), account.getAccountType());
             balanceRepository.save(balance);
         }

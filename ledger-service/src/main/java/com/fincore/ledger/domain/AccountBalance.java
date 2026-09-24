@@ -72,4 +72,14 @@ public class AccountBalance {
     public long getVersion() {
         return version;
     }
+
+    /**
+     * Overwrites the balance with a recomputed value. Only used by
+     * the rebuild-from-entries routine — normal posting uses
+     * {@link #apply(EntryType, BigDecimal, AccountType)}.
+     */
+    public void overwriteBalance(BigDecimal recomputed) {
+        this.balance = recomputed;
+        this.updatedAt = OffsetDateTime.now();
+    }
 }
